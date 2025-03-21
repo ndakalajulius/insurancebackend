@@ -2,52 +2,46 @@ const express = require("express");
 const router = express.Router();
 const Policy = require("../models/Policy");
 
-// Create Policy
+// 🔹 GET All Policies
+router.get("/", async (req, res) => {
+  try {
+    const policies = await Policy.find();
+    res.json(policies);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// 🔹 CREATE Policy
 router.post("/", async (req, res) => {
   try {
     const policy = new Policy(req.body);
     await policy.save();
     res.status(201).json(policy);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+  } catch (err) {
+    res.status(400).json({ error: "Error creating policy" });
   }
 });
 
-// Get All Policies
-router.get("/", async (req, res) => {
-  const policies = await Policy.find();
-  res.json(policies);
-});
-
-// Get Single Policy
-router.get("/:id", async (req, res) => {
-  try {
-    const policy = await Policy.findById(req.params.id);
-    if (!policy) return res.status(404).json({ message: "Not found" });
-    res.json(policy);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Update Policy
+// 🔹 UPDATE Policy
 router.put("/:id", async (req, res) => {
   try {
     const policy = await Policy.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(policy);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+  } catch (err) {
+    res.status(400).json({ error: "Error updating policy" });
   }
 });
 
-// Delete Policy
+// 🔹 DELETE Policy
 router.delete("/:id", async (req, res) => {
   try {
     await Policy.findByIdAndDelete(req.params.id);
     res.json({ message: "Policy deleted" });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+  } catch (err) {
+    res.status(500).json({ error: "Error deleting policy" });
   }
 });
 
 module.exports = router;
+
